@@ -1,44 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Student Registration</title>
-    <link rel="stylesheet" href="indexNew.css">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background:#f4f4f4;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            min-height:100vh;
+            padding:20px;
+        }
+
+        .container{
+            width:100%;
+            max-width:600px;
+            background:#fff;
+            padding:30px;
+            border-radius:10px;
+            box-shadow:0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            text-align:center;
+            margin-bottom:20px;
+        }
+
+        .form-group{
+            margin-bottom:15px;
+        }
+
+        label{
+            display:block;
+            margin-bottom:5px;
+            font-weight:bold;
+        }
+
+        input,
+        select{
+            width:100%;
+            padding:12px;
+            border:1px solid #ccc;
+            border-radius:5px;
+        }
+
+        button{
+            width:100%;
+            padding:14px;
+            border:none;
+            background:#007bff;
+            color:#fff;
+            font-size:16px;
+            border-radius:5px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#0056b3;
+        }
+
+        .required{
+            color:red;
+        }
+
+        .result-box{
+            margin:20px 0;
+            padding:15px;
+            background:#f1f1f1;
+            border-radius:5px;
+            text-align:center;
+            font-weight:bold;
+        }
+
+    </style>
 </head>
+
 <body>
+
     <div class="container">
+
         <h1>Student Registration Form</h1>
+
         <form id="studentForm">
+
             <div class="form-group">
-                <label for="firstName">First Name <span class="required">*</span></label>
-                <input type="text" id="firstName" name="firstName" required placeholder="e.g. ABUBAKAR">
+                <label for="firstName">
+                    First Name <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="firstName"
+                    required
+                    placeholder="e.g. ABUBAKAR"
+                />
             </div>
 
             <div class="form-group">
-                <label for="lastName">Last Name <span class="required">*</span></label>
-                <input type="text" id="lastName" name="lastName" required placeholder="e.g. TAFAWA">
+                <label for="lastName">
+                    Last Name <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="lastName"
+                    required
+                    placeholder="e.g. TAFAWA"
+                />
             </div>
 
             <div class="form-group">
-                <label for="otherName">Other Name(s)</label>
-                <input type="text" id="otherName" name="otherName" placeholder="e.g. BALEWA">
+                <label for="otherName">
+                    Other Name(s)
+                </label>
+
+                <input
+                    type="text"
+                    id="otherName"
+                    placeholder="e.g. BALEWA"
+                />
             </div>
 
             <div class="form-group">
-                <label for="idNumber">ID Number <span class="required">*</span></label>
-                <input type="text" id="idNumber" name="idNumber" required placeholder="CSC/19U/XXXX">
+                <label for="idNumber">
+                    ID Number <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="idNumber"
+                    required
+                    placeholder="CSC/19U/XXXX"
+                />
             </div>
 
             <div class="form-group">
-                <label for="dob">Date of Birth <span class="required">*</span></label>
-                <input type="date" id="dob" name="dob" required>
+                <label for="dob">
+                    Date of Birth <span class="required">*</span>
+                </label>
+
+                <input
+                    type="date"
+                    id="dob"
+                    required
+                />
             </div>
 
             <div class="form-group">
-                <label for="stateOfOrigin">State of Origin <span class="required">*</span></label>
-                <select id="stateOfOrigin" name="stateOfOrigin" required>
+                <label for="stateOfOrigin">
+                    State of Origin <span class="required">*</span>
+                </label>
+
+                <select id="stateOfOrigin" required>
+
                     <option value="">-- Select State --</option>
+
                     <option value="Abia">Abia</option>
                     <option value="Adamawa">Adamawa</option>
                     <option value="Akwa Ibom">Akwa Ibom</option>
@@ -76,18 +203,239 @@
                     <option value="Yobe">Yobe</option>
                     <option value="Zamfara">Zamfara</option>
                     <option value="FCT">Federal Capital Territory</option>
+
                 </select>
             </div>
 
             <div id="daysOnEarth" class="result-box">
+
                 The No. of days you have lived on Earth is:
+
                 <span id="daysResult">0</span>
+
             </div>
 
-            <button type="submit">Register Student</button>
+            <button type="submit">
+                Register Student
+            </button>
+
         </form>
+
     </div>
 
-    <script src="script.js"></script>
+    <script>
+
+        // =====================================
+        // API BASE URL
+        // =====================================
+        const API_BASE_URL =
+            "https://project-ddds.onrender.com/api/students";
+
+        // =====================================
+        // DOM ELEMENTS
+        // =====================================
+        const form =
+            document.getElementById("studentForm");
+
+        const dobInput =
+            document.getElementById("dob");
+
+        const daysResult =
+            document.getElementById("daysResult");
+
+        // =====================================
+        // CALCULATE DAYS LIVED
+        // =====================================
+        function calculateDaysLived(dateOfBirth){
+
+            const today = new Date();
+
+            const birthDate =
+                new Date(dateOfBirth);
+
+            const difference =
+                today - birthDate;
+
+            const days =
+                Math.floor(
+                    difference /
+                    (1000 * 60 * 60 * 24)
+                );
+
+            return days;
+        }
+
+        // =====================================
+        // UPDATE DAYS RESULT
+        // =====================================
+        dobInput.addEventListener(
+            "change",
+            () => {
+
+                const dob =
+                    dobInput.value;
+
+                if(dob){
+
+                    const daysLived =
+                        calculateDaysLived(dob);
+
+                    daysResult.textContent =
+                        daysLived;
+                }
+            }
+        );
+
+        // =====================================
+        // FORM SUBMISSION
+        // =====================================
+        form.addEventListener(
+            "submit",
+            async (e) => {
+
+                e.preventDefault();
+
+                // =====================================
+                // GET VALUES
+                // =====================================
+                const firstName =
+                    document
+                    .getElementById("firstName")
+                    .value
+                    .trim();
+
+                const lastName =
+                    document
+                    .getElementById("lastName")
+                    .value
+                    .trim();
+
+                const otherName =
+                    document
+                    .getElementById("otherName")
+                    .value
+                    .trim();
+
+                const idNumber =
+                    document
+                    .getElementById("idNumber")
+                    .value
+                    .trim();
+
+                const dob =
+                    document
+                    .getElementById("dob")
+                    .value;
+
+                const stateOfOrigin =
+                    document
+                    .getElementById("stateOfOrigin")
+                    .value;
+
+                // =====================================
+                // VALIDATION
+                // =====================================
+                if(
+                    !firstName ||
+                    !lastName ||
+                    !idNumber ||
+                    !dob ||
+                    !stateOfOrigin
+                ){
+
+                    alert(
+                        "Please fill all required fields"
+                    );
+
+                    return;
+                }
+
+                // =====================================
+                // REQUEST BODY
+                // =====================================
+                const formData = {
+
+                    firstName,
+                    lastName,
+                    otherName,
+                    idNumber,
+                    dob,
+                    stateOfOrigin
+                };
+
+                try{
+
+                    // =====================================
+                    // SEND DATA TO BACKEND
+                    // =====================================
+                    const response =
+                        await fetch(
+
+                            `${API_BASE_URL}/register`,
+
+                            {
+                                method:"POST",
+
+                                headers:{
+                                    "Content-Type":
+                                    "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify(formData)
+                            }
+                        );
+
+                    // =====================================
+                    // CONVERT RESPONSE
+                    // =====================================
+                    const data =
+                        await response.json();
+
+                    // =====================================
+                    // SUCCESS
+                    // =====================================
+                    if(response.ok){
+
+                        alert(data.message);
+
+                        console.log(
+                            "Student Registered:",
+                            data.student
+                        );
+
+                        // Reset form
+                        form.reset();
+
+                        // Reset days lived
+                        daysResult.textContent = "0";
+
+                    }else{
+
+                        // =====================================
+                        // ERROR FROM BACKEND
+                        // =====================================
+                        alert(
+                            data.message ||
+                            "Registration Failed"
+                        );
+                    }
+
+                }catch(error){
+
+                    // =====================================
+                    // SERVER CONNECTION ERROR
+                    // =====================================
+                    console.error(error);
+
+                    alert(
+                        "Cannot connect to backend server"
+                    );
+                }
+            }
+        );
+
+    </script>
+
 </body>
 </html>
